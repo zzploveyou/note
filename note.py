@@ -16,10 +16,28 @@ class Note:
         pass
 
 class HandleNotes:
+
     def __init__(self, Dir="/home/zzp/note"):
         self.path = os.path.realpath(Dir)
         self.noteNames = []
-        self.openformat = 'mdcharm "{:s}"'
+        self.openMD = 'mdcharm "{:s}"'
+        self.openSSH = 'vim "{:s}"'
+        self.openPDF = 'okular "{:s}"'
+        self.openPIC = 'eog "{:s}"'
+    
+    def open(self, filename):
+        """open note according to file type"""
+        fix = os.path.splitext(filename)
+        order = ""
+        if fix == '.md':
+            order = self.openMD.format(filename)
+        elif fix == '.pdf':
+            order = self.openPDF.format(filename)
+        elif fix in ['.jpg', 'png', 'jpeg']:
+            order = self.openPIC.format(filename)
+        else:
+            pass
+        os.system(order)
 
     def getNames(self):
         for d, sf, sd in os.walk(self.path):
@@ -45,8 +63,7 @@ class HandleNotes:
             print "%d: %s" % (idx, r)
         try:
             choice = int(raw_input("input id: "))
-            order = self.openformat.format(results[choice])
-            os.system(order)
+            self.open(results[choice])
         except Exception as e:
             print "Error: %s" %e
 
