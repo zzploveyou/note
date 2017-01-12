@@ -85,6 +85,6 @@ class HandleNotes:
             pass
 
 if __name__ == '__main__':
-    Dirs = ["/home/zzp/note/", "/home/zzp/document", "/home/zzp/download"]
+    Dirs = ["/home/zzp/note/", "/home/zzp/document"]
     hn = HandleNotes(Dirs=Dirs)
     hn.search(sys.argv[1:])
