@@ -17,8 +17,8 @@ class Note:
 
 class HandleNotes:
 
-    def __init__(self, Dir="/home/zzp/note"):
-        self.path = os.path.realpath(Dir)
+    def __init__(self, Dirs=["/home/zzp/note"]):
+        self.paths = map(os.path.realpath, Dirs)
         self.noteNames = []
         self.openMD = 'mdcharm "{:s}"'
         self.openSSH = 'vim "{:s}"'
@@ -44,31 +44,39 @@ class HandleNotes:
         elif fix in ['.jpg', 'png', 'jpeg']:
             order = self.openPIC.format(filename)
         else:
-            pass
+            order = self.openSSH.format(filename)
         os.system(order)
 
     def getNames(self):
-        for d, sf, sd in os.walk(self.path):
-            # mg.debug("Dir: %s" % d)
-            for i in sf:
-                # mg.debug("sub dirs: %s" % i)
-                pass
-            for j in sd:
-                self.noteNames.append(os.path.join(d, j))
-                # mg.debug("sub files: %s" % j)
+        for path in self.paths:
+            for d, sf, sd in os.walk(path):
+                for i in sf:
+                    pass
+                for j in sd:
+                    self.noteNames.append(os.path.join(d, j))
 
     def search(self, tags):
         tags = [tag.lower() for tag in tags] # lower the tags
         self.getNames()
         results = []
         for i in self.noteNames:
+            ipath = ""
+            for path in self.paths:
+                if path in i:
+                    ipath = path
+                    break
             i_low = i.lower()
             tg = True
             for tag in tags:
-                if tag not in i[len(self.path)+1:].lower(): tg = False
+                if tag not in i[len(ipath)+1:].lower(): tg = False
             if tg == True: results.append(i)
+        printed = []
         for idx, r in enumerate(results):
-            print "%d: %s" % (idx, r[len(self.path)+1:])
+            #print "%d: %s" % (idx, r[len(ipath)+1:])
+            if os.path.dirname(r) not in printed:
+                print os.path.dirname(r)
+                printed.append(os.path.dirname(r))
+            print "%d: %s %s" % (idx, "└─"+2*"─", os.path.basename(r))
         try:
             choice = int(raw_input("input id: "))
             self.open(results[choice])
@@ -77,5 +85,6 @@ class HandleNotes:
             pass
 
 if __name__ == '__main__':
-    hn = HandleNotes(Dir="/home/zzp/note/")
+    Dirs = ["/home/zzp/note/", "/home/zzp/document", "/home/zzp/download"]
+    hn = HandleNotes(Dirs=Dirs)
     hn.search(sys.argv[1:])
