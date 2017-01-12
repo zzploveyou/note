@@ -25,11 +25,8 @@ class HandleNotes:
         self.openPDF = 'okular "{:s}"'
         self.openPIC = 'eog "{:s}"'
         self.ssh = False
-        print os.environ['SSH_CLIENT']
-        if os.environ['SSH_CLIENT'] != "":
+        if 'SSH_CLIENT' in os.environ:
             self.ssh = True
-            print self.ssh
-        raw_input()
     
     def open(self, filename):
         # print "filename: %s" % filename
