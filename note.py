@@ -24,6 +24,7 @@ class HandleNotes:
         self.openSSH = 'vim "{:s}"'
         self.openPDF = 'okular "{:s}"'
         self.openPIC = 'eog "{:s}"'
+        self.opendefault = 'xdg-open "{:s}"'
         self.ssh = False
         if 'SSH_CLIENT' in os.environ:
             self.ssh = True
@@ -43,6 +44,8 @@ class HandleNotes:
             order = self.openPDF.format(filename)
         elif fix in ['.jpg', 'png', 'jpeg']:
             order = self.openPIC.format(filename)
+        elif not self.ssh:
+            order = self.opendefault.format(filename)
         else:
             order = self.openSSH.format(filename)
         os.system(order)
