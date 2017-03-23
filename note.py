@@ -79,7 +79,7 @@ class HandleNotes:
             if os.path.dirname(r) not in printed:
                 print os.path.dirname(r)
                 printed.append(os.path.dirname(r))
-            print "%d: %s %s" % (idx, "└─"+2*"─", os.path.basename(r))
+            print "%3d: %s %s" % (idx, "└─"+2*"─", os.path.basename(r))
         try:
             choice = int(raw_input("input id: "))
             self.open(results[choice])
