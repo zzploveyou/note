@@ -16,7 +16,7 @@ class HandleNotes:
         self.noteNames = []
         self.openMD = 'mdcharm "{:s}"'
         self.openSSH = 'vim "{:s}"'
-        self.openPDF = 'okular "{:s}"'
+        self.openPDF = 'xdg-open "{:s}"'
         self.openPIC = 'eog "{:s}"'
         self.opendefault = 'xdg-open "{:s}"'
         self.ssh = False
@@ -90,8 +90,13 @@ class HandleNotes:
                 idx += 1
 
         try:
-            choice = int(raw_input("input id: "))
-            self.open(results_map[choice])
+            if len(results_map) == 0:
+                pass
+            elif len(results_map) == 1:
+                self.open(results_map[1])
+            else:
+                choice = int(raw_input("input id: "))
+                self.open(results_map[choice])
         except Exception as e:
             # print "Error: %s" %e
             pass
