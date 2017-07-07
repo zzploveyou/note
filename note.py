@@ -19,6 +19,7 @@ class HandleNotes:
         self.openPDF = 'xdg-open "{:s}"'
         self.openPIC = 'eog "{:s}"'
         self.opendefault = 'xdg-open "{:s}"'
+        self.openipynb = 'ipython notebook "{:s}"'
         self.ssh = False
         if 'SSH_CLIENT' in os.environ:
             self.ssh = True
@@ -36,6 +37,8 @@ class HandleNotes:
                 order = self.openSSH.format(filename)
         elif fix == '.pdf':
             order = self.openPDF.format(filename)
+        elif fix == '.ipynb':
+            order = self.openipynb.format(filename)
         elif fix in ['.jpg', 'png', 'jpeg']:
             order = self.openPIC.format(filename)
         elif not self.ssh:
