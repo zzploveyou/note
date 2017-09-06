@@ -8,11 +8,14 @@ import os
 import shutil
 import sys
 from collections import defaultdict
+import pickle
 
 class HandleNotes:
 
-    def __init__(self, Dirs=["/home/zzp/note"]):
+    def __init__(self, Dirs=["/home/zzp/note"], recache=False, pkfile="note.pkl"):
         self.paths = map(os.path.realpath, Dirs)
+        self.recache = recache
+        self.pkfile = os.path.join(os.path.dirname(__file__), pkfile)
         self.noteNames = []
         self.openMD = 'mdcharm "{:s}"'
         self.openSSH = 'vim "{:s}"'
@@ -48,12 +51,20 @@ class HandleNotes:
         os.system(order)
 
     def getNames(self):
-        for path in self.paths:
-            for d, sf, sd in os.walk(path):
-                for i in sf:
-                    pass
-                for j in sd:
-                    self.noteNames.append(os.path.join(d, j))
+        if self.recache == True:
+            for path in self.paths:
+                for d, sf, sd in os.walk(path):
+                    for i in sf:
+                        pass
+                    for j in sd:
+                        self.noteNames.append(os.path.join(d, j))
+            with open(self.pkfile, "w") as f:
+                pks = pickle.dumps(self.noteNames)
+                f.write(pks)
+        else:
+            print("[✓] read cache from pkfile.")
+            pks = open(self.pkfile).read()
+            self.noteNames = pickle.loads(pks)
 
     def search(self, tags):
         tags = [tag.lower() for tag in tags]  # lower the tags
@@ -73,7 +84,7 @@ class HandleNotes:
             if tg == True:
                 results.append(i)
 
-        results_group = defaultdict(lambda: [])
+        results_group = defaultdict(lambda : [])
         # make results into groups by dirname.
         for re in results:
             results_group[os.path.dirname(re)].append(os.path.basename(re))
@@ -106,5 +117,15 @@ class HandleNotes:
 
 if __name__ == '__main__':
     Dirs = ["/home/zzp/note/"]
-    hn = HandleNotes(Dirs=Dirs)
-    hn.search(sys.argv[1:])
+    if sys.argv[1:] == ["recache"]:
+        hn = HandleNotes(Dirs=Dirs, recache=True)
+        hn.getNames()
+        print("recache done.")
+        sys.exit(0)
+    else:
+        hn = HandleNotes(Dirs=Dirs, recache=False)
+        try:
+            hn.search(sys.argv[1:])
+        except Exception as e:
+            """cache need updates"""
+            print("maybe you nedd recache.")
