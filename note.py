@@ -58,13 +58,11 @@ class HandleNotes:
                         pass
                     for j in sd:
                         self.noteNames.append(os.path.join(d, j))
-            with open(self.pkfile, "w") as f:
-                pks = pickle.dumps(self.noteNames)
-                f.write(pks)
+            with open(self.pkfile, "wb") as f:
+                pickle.dump(self.noteNames, f)
         else:
             print("[✓] read cache from pkfile.")
-            pks = open(self.pkfile).read()
-            self.noteNames = pickle.loads(pks)
+            self.noteNames = pickle.load(open(self.pkfile, 'rb'))
 
     def search(self, tags):
         tags = [tag.lower() for tag in tags]  # lower the tags
