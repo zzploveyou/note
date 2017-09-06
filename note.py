@@ -62,7 +62,8 @@ class HandleNotes:
                 pickle.dump(self.noteNames, f)
         else:
             print("[✓] read cache from pkfile.")
-            self.noteNames = pickle.load(open(self.pkfile, 'rb'))
+            with open(self.pkfile, 'rb') as f:
+                self.noteNames = pickle.load(f)
 
     def search(self, tags):
         tags = [tag.lower() for tag in tags]  # lower the tags
