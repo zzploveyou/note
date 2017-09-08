@@ -48,6 +48,7 @@ class HandleNotes:
             order = self.opendefault.format(filename)
         else:
             order = self.openSSH.format(filename)
+        order = order + " &"
         os.system(order)
 
     def getNames(self):
