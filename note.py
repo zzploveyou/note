@@ -1,10 +1,13 @@
 # coding:utf-8
 '''
 2017-01-03 17:36
-note and review.
+Function:
+    find note from note-Dirs.
+    support re.
 '''
 
 import os
+import re
 import shutil
 import sys
 from collections import defaultdict
@@ -96,15 +99,15 @@ class HandleNotes:
                 i_low = i.lower()
                 tg = True
                 for tag in tags:
-                    if tag not in i[len(ipath) + 1:].lower():
+                    if re.search(tag, i[len(ipath) + 1:].lower()) == None:
                         tg = False
                 if tg == True:
                     results.append(i)
         
         results_group = defaultdict(lambda : [])
         # make results into groups by dirname.
-        for re in results:
-            results_group[os.path.dirname(re)].append(os.path.basename(re))
+        for res in results:
+            results_group[os.path.dirname(res)].append(os.path.basename(res))
 
         for group, bases in results_group.items():
             # sorted by mtime.
@@ -119,7 +122,6 @@ class HandleNotes:
                 print("%3d: %s %s" % (idx, "└─" + 2 * "─", ba))
                 results_map[idx] = os.path.join(group, ba)
                 idx += 1
-
         try:
             if len(results_map) == 0:
                 pass
@@ -145,4 +147,4 @@ if __name__ == '__main__':
             hn.search(sys.argv[1:])
         except Exception as e:
             """cache need updates"""
-            print("maybe you nedd recache.")
+            print("maybe you nedd recache.\nError: %s" %(e))
