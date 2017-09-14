@@ -12,10 +12,13 @@ import pickle
 
 class HandleNotes:
 
-    def __init__(self, Dirs=["/home/zzp/note"], recache=False, pkfile="note.pkl"):
+    def __init__(self, Dirs=["/home/zzp/note"], recache=False, 
+            pkfile="note.pkl", mapfile="maps.txt"):
         self.paths = map(os.path.realpath, Dirs)
         self.recache = recache
-        self.pkfile = os.path.join(os.path.dirname(__file__), pkfile)
+        self.path = os.path.dirname(__file__)
+        self.pkfile = os.path.join(self.path, pkfile)
+        self.mpfile = os.path.join(self.path, mapfile)
         self.noteNames = []
         self.openMD = 'mdcharm "{:s}"'
         self.openSSH = 'vim "{:s}"'
@@ -70,20 +73,34 @@ class HandleNotes:
         tags = [tag.lower() for tag in tags]  # lower the tags
         self.getNames()
         results = []
-        for i in self.noteNames:
-            ipath = ""
-            for path in self.paths:
-                if path in i:
-                    ipath = path
-                    break
-            i_low = i.lower()
-            tg = True
-            for tag in tags:
-                if tag not in i[len(ipath) + 1:].lower():
-                    tg = False
-            if tg == True:
-                results.append(i)
-
+        
+        if os.path.exists(self.mpfile):
+            # read map file.
+            mps = {}
+            for line in open(self.mpfile):
+                tmp = line.strip().split("#")
+                if len(tmp) == 2:
+                    mps[tmp[0]] = tmp[1]
+            tag = " ".join(tags)
+        
+        if tag in mps:
+            # specific map from mapfile.
+            results.append(mps[tag])
+        else:
+            for i in self.noteNames:
+                ipath = ""
+                for path in self.paths:
+                    if path in i:
+                        ipath = path
+                        break
+                i_low = i.lower()
+                tg = True
+                for tag in tags:
+                    if tag not in i[len(ipath) + 1:].lower():
+                        tg = False
+                if tg == True:
+                    results.append(i)
+        
         results_group = defaultdict(lambda : [])
         # make results into groups by dirname.
         for re in results:
