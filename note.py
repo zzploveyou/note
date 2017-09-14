@@ -25,9 +25,7 @@ class HandleNotes:
         self.noteNames = []
         self.openMD = 'mdcharm "{:s}"'
         self.openSSH = 'vim "{:s}"'
-        self.openPDF = 'xdg-open "{:s}"'
-        self.openPIC = 'eog "{:s}"'
-        self.opendefault = 'xdg-open "{:s}"'
+        self.opendefault = 'gvfs-open "{:s}"' # xdg-open(gnome)
         self.openipynb = 'ipython notebook "{:s}"'
         self.ssh = False
         if 'SSH_CLIENT' in os.environ:
@@ -39,21 +37,15 @@ class HandleNotes:
         fix = os.path.splitext(filename)[1]
         order = ""
         # print "fix: %s" % fix
-        if fix == '.md':
-            if not self.ssh:
-                order = self.openMD.format(filename)
-            else:
-                order = self.openSSH.format(filename)
-        elif fix == '.pdf':
-            order = self.openPDF.format(filename)
-        elif fix == '.ipynb':
-            order = self.openipynb.format(filename)
-        elif fix in ['.jpg', 'png', 'jpeg']:
-            order = self.openPIC.format(filename)
-        elif not self.ssh:
-            order = self.opendefault.format(filename)
+        if self.ssh:
+            self.openSSH.format(filename)
         else:
-            order = self.openSSH.format(filename)
+            if fix == '.md':
+                order = self.openMD.format(filename)
+            elif fix == '.ipynb':
+                order = self.openipynb.format(filename)
+            else:
+                order = self.opendefault.format(filename)
         order = order + " &"
         os.system(order)
 
