@@ -139,4 +139,4 @@ if __name__ == '__main__':
             hn.search(sys.argv[1:])
         except Exception as e:
             """cache need updates"""
-            print("maybe you nedd recache.\nError: %s" %(e))
+            print("maybe you need recache.\nError: %s" %(e))
