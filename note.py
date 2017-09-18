@@ -8,10 +8,11 @@ Function:
 
 import os
 import re
+import pickle
 import shutil
 import sys
 from collections import defaultdict
-import pickle
+from config import Dirs
 
 class HandleNotes:
 
@@ -127,7 +128,6 @@ class HandleNotes:
             pass
 
 if __name__ == '__main__':
-    Dirs = ["/home/zzp/note/"]
     if sys.argv[1:] == ["recache"]:
         hn = HandleNotes(Dirs=Dirs, recache=True)
         hn.getNames()
