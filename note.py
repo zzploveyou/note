@@ -131,7 +131,7 @@ if __name__ == '__main__':
     if sys.argv[1:] == ["recache"]:
         hn = HandleNotes(Dirs=Dirs, recache=True)
         hn.getNames()
-        print("recache done.")
+        print("[+] recache done.")
         sys.exit(0)
     else:
         hn = HandleNotes(Dirs=Dirs, recache=False)
@@ -139,4 +139,4 @@ if __name__ == '__main__':
             hn.search(sys.argv[1:])
         except Exception as e:
             """cache need updates"""
-            print("maybe you need recache.\nError: %s" %(e))
+            print("[-] maybe you need recache.\nError: %s" %(e))
