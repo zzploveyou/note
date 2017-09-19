@@ -3,7 +3,13 @@ find and open note file from note-Dirs given(support re search).
 
 # Usage
 
-**you should modify config.py firstly.**
+**you should modify config.py firstly**
+
+then ```python note.py recache```
+
+when add new notes into note-Dirs or rename notes,
+
+you should recache in case of wrong results.
 
 ## recache
 

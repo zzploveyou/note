@@ -100,7 +100,9 @@ class HandleNotes:
         results_group = defaultdict(lambda : [])
         # make results into groups by dirname.
         for res in results:
-            results_group[os.path.dirname(res)].append(os.path.basename(res))
+            if os.path.exists(res):
+                # if file exists, add to results.
+                results_group[os.path.dirname(res)].append(os.path.basename(res))
 
         for group, bases in results_group.items():
             # sorted by mtime.
