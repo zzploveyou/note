@@ -92,8 +92,13 @@ class HandleNotes:
                 i_low = i.lower()
                 tg = True
                 for tag in tags:
-                    if re.search(tag, i[len(ipath) + 1:].lower()) == None:
-                        tg = False
+                    try:
+                        if re.search(tag, i[len(ipath) + 1:].lower()) == None:
+                            tg = False
+                    except Exception as e:
+                        print("Maybe your RE is not correct.\nError: {}"\
+                                .format(e))
+                        sys.exit(1)
                 if tg == True:
                     results.append(i)
         
@@ -137,8 +142,4 @@ if __name__ == '__main__':
         sys.exit(0)
     else:
         hn = HandleNotes(Dirs=Dirs, recache=False)
-        try:
-            hn.search(sys.argv[1:])
-        except Exception as e:
-            """cache need updates"""
-            print("[-] maybe you need recache.\nError: %s" %(e))
+        hn.search(sys.argv[1:])
