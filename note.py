@@ -39,7 +39,7 @@ class HandleNotes:
         order = ""
         # print "fix: %s" % fix
         if self.ssh:
-            self.openSSH.format(filename)
+            order = self.openSSH.format(filename)
         else:
             if fix == '.md':
                 order = self.openMD.format(filename)
@@ -47,7 +47,7 @@ class HandleNotes:
                 order = self.openipynb.format(filename)
             else:
                 order = self.opendefault.format(filename)
-        order = order + " &"
+            order = order + " &"
         os.system(order)
 
     def getNames(self):
