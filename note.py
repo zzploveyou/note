@@ -140,6 +140,10 @@ if __name__ == '__main__':
         hn.getNames()
         print("[+] recache done.")
         sys.exit(0)
+    elif sys.argv[1:] == ["help"]:
+        print("Usage: python note.py substring1 substring2 ...\n\
+Attention: please don't forget quotate each substring if using RE. """)
+        sys.exit(0)
     else:
         hn = HandleNotes(Dirs=Dirs, recache=False)
         hn.search(sys.argv[1:])
