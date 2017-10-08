@@ -38,11 +38,16 @@ $ note "java.math.*BigInteger.html"
 input id: 
 ```
 # Example2
-```python
+```bash
 $ note python module thread
 [✓] read cache from pkfile.
 /home/zzp/note/python
   1: └─── Module-threadpool-线程池.md
   2: └─── Module-threading-多线程.md
 input id: 
+```
+# Example3
+```bash
+# find all files that is not with the suffix "html".
+$ note "[^h][^t][^m][^l]$"
 ```
