@@ -17,38 +17,33 @@ from config import Dirs
 class HandleNotes:
 
     def __init__(self, Dirs=["/home/zzp/note"], recache=False, 
-            pkfile="note.pkl", mapfile="maps.txt"):
+            fileExplorer=False, pkfile="note.pkl", mapfile="maps.txt"):
         self.paths = map(os.path.realpath, Dirs)
         self.recache = recache
+        self.fileExplorer = fileExplorer
         self.path = os.path.dirname(__file__)
         self.pkfile = os.path.join(self.path, pkfile)
         self.mpfile = os.path.join(self.path, mapfile)
         self.noteNames = []
-        self.openMD = 'mdcharm "{:s}"'
-        self.openSSH = 'vim "{:s}"'
-        self.opendefault = 'gvfs-open "{:s}"' # xdg-open(gnome)
-        self.openipynb = 'ipython notebook "{:s}"'
-        self.ssh = False
-        if 'SSH_CLIENT' in os.environ:
-            self.ssh = True
 
     def open(self, filename):
-        # print "filename: %s" % filename
         """open note according to file type"""
         fix = os.path.splitext(filename)[1]
         order = ""
-        # print "fix: %s" % fix
-        if self.ssh:
-            order = self.openSSH.format(filename)
+        if 'SSH_CLIENT' in os.environ:
+            order = "vim {}".format(filename)
         else:
             if fix == '.md':
-                order = self.openMD.format(filename)
+                order = "mdcharm {}".format(filename)
             elif fix == '.ipynb':
-                order = self.openipynb.format(filename)
+                order = "ipython notebook {}".format(filename)
             else:
-                order = self.opendefault.format(filename)
+                order = "gvfs-open {}".format(filename)
             order = order + " &"
+            if self.fileExplorer:
+                os.popen2("nautilus {}".format(filename))
         os.system(order)
+        #os.popen2(order)
 
     def getNames(self):
         if self.recache == True:
@@ -135,6 +130,9 @@ class HandleNotes:
             pass
 
 if __name__ == '__main__':
+    if len(sys.argv) == 1:
+        print("python note.py help")
+        sys.exit(0)
     if sys.argv[1:] == ["recache"]:
         hn = HandleNotes(Dirs=Dirs, recache=True)
         hn.getNames()
@@ -142,8 +140,13 @@ if __name__ == '__main__':
         sys.exit(0)
     elif sys.argv[1:] == ["help"]:
         print("Usage: python note.py substring1 substring2 ...\n\
-Attention: please don't forget quotate each substring if using RE. """)
+Attention: please don't forget quotate each substring if using RE.\n\
+\npython note.py help\n  review this help page.\n\
+\npython note.py file substring1 substring2 ...\n  open file in fileExplorer.")
         sys.exit(0)
+    elif sys.argv[1] == "file":
+        hn = HandleNotes(Dirs=Dirs, fileExplorer=True)
+        hn.search(sys.argv[2:])
     else:
-        hn = HandleNotes(Dirs=Dirs, recache=False)
+        hn = HandleNotes(Dirs=Dirs)
         hn.search(sys.argv[1:])
