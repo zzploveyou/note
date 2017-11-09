@@ -31,17 +31,17 @@ class HandleNotes:
         fix = os.path.splitext(filename)[1]
         order = ""
         if 'SSH_CLIENT' in os.environ:
-            order = "vim {}".format(filename)
+            order = "vim '{}'".format(filename)
         else:
             if fix == '.md':
-                order = "mdcharm {}".format(filename)
+                order = "mdcharm '{}'".format(filename)
             elif fix == '.ipynb':
-                order = "ipython notebook {}".format(filename)
+                order = "ipython notebook '{}'".format(filename)
             else:
-                order = "gvfs-open {}".format(filename)
+                order = "gio open '{}'".format(filename)
             order = order + " &"
             if self.fileExplorer:
-                os.popen2("nautilus {}".format(filename))
+                os.popen2("nautilus '{}'".format(filename))
         os.system(order)
         #os.popen2(order)
 
