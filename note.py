@@ -140,9 +140,9 @@ if __name__ == '__main__':
         sys.exit(0)
     elif sys.argv[1:] == ["help"]:
         print("Usage: python note.py substring1 substring2 ...\n\
-Attention: please don't forget quotate each substring if using RE.\n\
-\npython note.py help\n  review this help page.\n\
-\npython note.py file substring1 substring2 ...\n  open file in fileExplorer.")
+            \nAttention: please don't forget quotate each substring if using RE.\n\
+            \npython note.py help\n  display this help page.\n\
+            \npython note.py file substring1 substring2 ...\n  open file in fileExplorer.")
         sys.exit(0)
     elif sys.argv[1] == "file":
         hn = HandleNotes(Dirs=Dirs, fileExplorer=True)
