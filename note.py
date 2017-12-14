@@ -7,17 +7,18 @@ Function:
 '''
 
 import os
-import re
 import pickle
-import shutil
+import re
 import sys
 from collections import defaultdict
+
 from config import Dirs
+
 
 class HandleNotes:
 
-    def __init__(self, Dirs=["/home/zzp/note"], recache=False, 
-            fileExplorer=False, pkfile="note.pkl", mapfile="maps.txt"):
+    def __init__(self, Dirs=["/home/zzp/note"], recache=False,
+                 fileExplorer=False, pkfile="note.pkl", mapfile="maps.txt"):
         self.paths = map(os.path.realpath, Dirs)
         self.recache = recache
         self.fileExplorer = fileExplorer
@@ -43,10 +44,10 @@ class HandleNotes:
             if self.fileExplorer:
                 os.popen2("nautilus '{}'".format(filename))
         os.system(order)
-        #os.popen2(order)
+        # os.popen2(order)
 
     def getNames(self):
-        if self.recache == True:
+        if self.recache is True:
             for path in self.paths:
                 for d, sf, sd in os.walk(path):
                     for i in sf:
@@ -64,7 +65,6 @@ class HandleNotes:
         tags = [tag.lower() for tag in tags]  # lower the tags
         self.getNames()
         results = []
-        
         if os.path.exists(self.mpfile):
             # read map file.
             mps = {}
@@ -73,7 +73,6 @@ class HandleNotes:
                 if len(tmp) == 2:
                     mps[tmp[0]] = tmp[1]
             tag = " ".join(tags)
-        
         if tag in mps:
             # specific map from mapfile.
             results.append(mps[tag])
@@ -84,25 +83,24 @@ class HandleNotes:
                     if path in i:
                         ipath = path
                         break
-                i_low = i.lower()
                 tg = True
                 for tag in tags:
                     try:
-                        if re.search(tag, i[len(ipath) + 1:].lower()) == None:
+                        if re.search(tag, i[len(ipath) + 1:].lower()) is None:
                             tg = False
                     except Exception as e:
-                        print("Maybe your RE is not correct.\nError: {}"\
-                                .format(e))
+                        print("Maybe your RE is not correct.\nError: {}"
+                              .format(e))
                         sys.exit(1)
-                if tg == True:
+                if tg is True:
                     results.append(i)
-        
-        results_group = defaultdict(lambda : [])
+        results_group = defaultdict(lambda: [])
         # make results into groups by dirname.
         for res in results:
             if os.path.exists(res):
                 # if file exists, add to results.
-                results_group[os.path.dirname(res)].append(os.path.basename(res))
+                results_group[os.path.dirname(res)].append(
+                        os.path.basename(res))
 
         for group, bases in results_group.items():
             # sorted by mtime.
@@ -129,6 +127,7 @@ class HandleNotes:
             # print "Error: %s" %e
             pass
 
+
 if __name__ == '__main__':
     if len(sys.argv) == 1:
         print("python note.py help")
@@ -140,9 +139,11 @@ if __name__ == '__main__':
         sys.exit(0)
     elif sys.argv[1:] == ["help"]:
         print("Usage: python note.py substring1 substring2 ...\n\
-            \nAttention: please don't forget quotate each substring if using RE.\n\
+            \nAttention: please don't forget quotate each substring\
+if using RE.\n\
             \npython note.py help\n  display this help page.\n\
-            \npython note.py file substring1 substring2 ...\n  open file in fileExplorer.")
+            \npython note.py file substring1 substring2 ...\n\
+open file in fileExplorer.")
         sys.exit(0)
     elif sys.argv[1] == "file":
         hn = HandleNotes(Dirs=Dirs, fileExplorer=True)
