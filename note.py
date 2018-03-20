@@ -34,9 +34,7 @@ class HandleNotes:
         if 'SSH_CLIENT' in os.environ:
             order = "vim '{}'".format(filename)
         else:
-            if fix == '.md':
-                order = "mdcharm '{}'".format(filename)
-            elif fix == '.ipynb':
+            if fix == '.ipynb':
                 order = "ipython notebook '{}'".format(filename)
             else:
                 order = "gio open '{}'".format(filename)
