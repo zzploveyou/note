@@ -15,17 +15,20 @@ from collections import defaultdict
 from config import Dirs
 
 
-class HandleNotes:
+class HandleNotes(object):
+    """search notes from dirs."""
 
-    def __init__(self, Dirs=["/home/zzp/note"], recache=False,
-                 fileExplorer=False, pkfile="note.pkl", mapfile="maps.txt"):
-        self.paths = map(os.path.realpath, Dirs)
+    def __init__(self, dirs, recache=False,
+                 fileExplorer=False,
+                 pkfile="note.pkl",
+                 mapfile="maps.txt"):
+        self.paths = map(os.path.realpath, dirs)
         self.recache = recache
-        self.fileExplorer = fileExplorer
+        self.file_explorer = fileExplorer
         self.path = os.path.dirname(__file__)
         self.pkfile = os.path.join(self.path, pkfile)
         self.mpfile = os.path.join(self.path, mapfile)
-        self.noteNames = []
+        self.note_names = []
 
     def open(self, filename):
         """open note according to file type"""
@@ -39,7 +42,7 @@ class HandleNotes:
             else:
                 order = "gio open '{}'".format(filename)
             order = order + " &"
-            if self.fileExplorer:
+            if self.file_explorer:
                 os.popen2("nautilus '{}'".format(filename))
         os.system(order)
         # os.popen2(order)
@@ -51,9 +54,9 @@ class HandleNotes:
                     for i in sf:
                         pass
                     for j in sd:
-                        self.noteNames.append(os.path.join(d, j))
+                        self.note_names.append(os.path.join(d, j))
             with open(self.pkfile, "wb") as f:
-                pickle.dump(self.noteNames, f)
+                pickle.dump(self.note_names, f)
         else:
             print("[✓] read cache from pkfile.")
             with open(self.pkfile, 'rb') as f:
@@ -131,7 +134,7 @@ if __name__ == '__main__':
         print("python note.py help")
         sys.exit(0)
     if sys.argv[1:] == ["recache"]:
-        hn = HandleNotes(Dirs=Dirs, recache=True)
+        hn = HandleNotes(dirs=Dirs, recache=True)
         hn.getNames()
         print("[+] recache done.")
         sys.exit(0)
@@ -144,8 +147,8 @@ if using RE.\n\
 open file in fileExplorer.")
         sys.exit(0)
     elif sys.argv[1] == "file":
-        hn = HandleNotes(Dirs=Dirs, fileExplorer=True)
+        hn = HandleNotes(dirs=Dirs, fileExplorer=True)
         hn.search(sys.argv[2:])
     else:
-        hn = HandleNotes(Dirs=Dirs)
+        hn = HandleNotes(dirs=Dirs)
         hn.search(sys.argv[1:])
