@@ -1,2 +1,0 @@
-jdk#/home/zzp/note/java/jdk-8u144-docs/index.html
-re#/home/zzp/note/python/Package-re.md

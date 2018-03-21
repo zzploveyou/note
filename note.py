@@ -11,8 +11,10 @@ import pickle
 import re
 import sys
 from collections import defaultdict
+import json
 
-from config import Dirs
+reload(sys)
+sys.setdefaultencoding('utf-8')
 
 
 class HandleNotes(object):
@@ -21,13 +23,13 @@ class HandleNotes(object):
     def __init__(self, dirs, recache=False,
                  fileExplorer=False,
                  pkfile="note.pkl",
-                 mapfile="maps.txt"):
+                 maps=defaultdict(lambda: "")):
         self.paths = map(os.path.realpath, dirs)
         self.recache = recache
         self.file_explorer = fileExplorer
         self.path = os.path.dirname(__file__)
         self.pkfile = os.path.join(self.path, pkfile)
-        self.mpfile = os.path.join(self.path, mapfile)
+        self.maps = maps
         self.note_names = []
 
     def open(self, filename):
@@ -51,8 +53,6 @@ class HandleNotes(object):
         if self.recache is True:
             for path in self.paths:
                 for d, sf, sd in os.walk(path):
-                    for i in sf:
-                        pass
                     for j in sd:
                         self.note_names.append(os.path.join(d, j))
             with open(self.pkfile, "wb") as f:
@@ -66,17 +66,10 @@ class HandleNotes(object):
         tags = [tag.lower() for tag in tags]  # lower the tags
         self.getNames()
         results = []
-        if os.path.exists(self.mpfile):
-            # read map file.
-            mps = {}
-            for line in open(self.mpfile):
-                tmp = line.strip().split("#")
-                if len(tmp) == 2:
-                    mps[tmp[0]] = tmp[1]
-            tag = " ".join(tags)
-        if tag in mps:
+        tag = " ".join(tags)
+        if tag in self.maps:
             # specific map from mapfile.
-            results.append(mps[tag])
+            results.append(self.maps[tag])
         else:
             for i in self.noteNames:
                 ipath = ""
@@ -101,7 +94,7 @@ class HandleNotes(object):
             if os.path.exists(res):
                 # if file exists, add to results.
                 results_group[os.path.dirname(res)].append(
-                        os.path.basename(res))
+                    os.path.basename(res))
 
         for group, bases in results_group.items():
             # sorted by mtime.
@@ -113,7 +106,7 @@ class HandleNotes(object):
         for group, bases in results_group.items():
             print(group)
             for ba in bases:
-                print("%3d: %s %s" % (idx, "└─" + 2 * "─", ba))
+                print("{:3d}: └─── {}".format(idx, ba))
                 results_map[idx] = os.path.join(group, ba)
                 idx += 1
         try:
@@ -130,11 +123,29 @@ class HandleNotes(object):
 
 
 if __name__ == '__main__':
+    # read config file(dirs and maps)
+    PATH = os.path.dirname(__file__)
+    configfile = os.path.join(PATH, "config.json")
+    DIRS = []
+    MAPS = defaultdict(lambda: "")
+    if os.path.exists(configfile):
+        try:
+            with open(configfile) as jf:
+                jsdic = json.load(jf)
+                DIRS = jsdic['DIRS']
+                MAPS = jsdic['MAPS']
+        except Exception as e:
+            print e
+            sys.exit(1)
+
+    # read sys.argv
     if len(sys.argv) == 1:
+        # no input argument.
         print("python note.py help")
         sys.exit(0)
     if sys.argv[1:] == ["recache"]:
-        hn = HandleNotes(dirs=Dirs, recache=True)
+        # input recache order.
+        hn = HandleNotes(dirs=DIRS, recache=True, maps=MAPS)
         hn.getNames()
         print("[+] recache done.")
         sys.exit(0)
@@ -147,8 +158,10 @@ if using RE.\n\
 open file in fileExplorer.")
         sys.exit(0)
     elif sys.argv[1] == "file":
-        hn = HandleNotes(dirs=Dirs, fileExplorer=True)
+        # choose with explorer as the same time.
+        hn = HandleNotes(dirs=DIRS, fileExplorer=True, maps=MAPS)
         hn.search(sys.argv[2:])
     else:
-        hn = HandleNotes(dirs=Dirs)
+        # normal mode.
+        hn = HandleNotes(dirs=DIRS, maps=MAPS)
         hn.search(sys.argv[1:])

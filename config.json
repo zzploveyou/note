@@ -1,0 +1,7 @@
+{
+    "DIRS": ["/home/zzp/note/", "/home/zzp/program/database/jdk-10-docs"],
+    "MAPS": {
+        "jdk": "/home/zzp/program/database/jdk-10-docs/index.html",
+        "re": "/home/zzp/note/python/Package-re.md"
+    }
+}

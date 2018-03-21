@@ -1,1 +1,0 @@
-Dirs = ["/home/zzp/note/"]
