@@ -3,7 +3,18 @@ find and open note file from note-Dirs given(support re search).
 
 # Usage
 
-**you should modify config.py firstly**
+you should edit ```config.json``` firstly.
+
+example of config.json:
+```
+{
+    "DIRS":["/home/zzp/note"],
+    "MAPS":{
+        "jdk": "/home/zzp/note/java/jdk-docs/index.html",
+        "re": "/home/zzp/note/python/re.md"
+    }
+}
+```
 
 then ```python note.py recache```
 
