@@ -1,4 +1,3 @@
-# coding:utf-8
 '''
 2017-01-03 17:36
 Function:
@@ -13,9 +12,6 @@ import sys
 from collections import defaultdict
 import json
 
-reload(sys)
-sys.setdefaultencoding('utf-8')
-
 
 class HandleNotes(object):
     """search notes from dirs."""
@@ -26,7 +22,7 @@ class HandleNotes(object):
                  fileExplorer=False,
                  pkfile="note.pkl",
                  maps=defaultdict(lambda: "")):
-        self.paths = map(os.path.realpath, dirs)
+        self.paths = list(map(os.path.realpath, dirs))
         self.recache = recache
         self.file_explorer = fileExplorer
         self.path = os.path.dirname(__file__)
@@ -85,8 +81,8 @@ class HandleNotes(object):
                         if re.search(tag, i[len(ipath) + 1:].lower()) is None:
                             tg = False
                     except Exception as e:
-                        print("Maybe your RE is not correct.\nError: {}"
-                              .format(e))
+                        print(("Maybe your RE is not correct.\nError: {}"
+                              .format(e)))
                         sys.exit(1)
                 if tg is True:
                     results.append(i)
@@ -98,17 +94,17 @@ class HandleNotes(object):
                 results_group[os.path.dirname(res)].append(
                     os.path.basename(res))
 
-        for group, bases in results_group.items():
+        for group, bases in list(results_group.items()):
             # sorted by mtime.
             results_group[group] = sorted(
                 bases, key=lambda x: os.path.getmtime(os.path.join(group, x)))
         idx = 1
         results_map = {}
         # record idmap
-        for group, bases in results_group.items():
+        for group, bases in list(results_group.items()):
             print(group)
             for ba in bases:
-                print("{:3d}: └─── {}".format(idx, ba))
+                print(("{:3d}: └─── {}".format(idx, ba)))
                 results_map[idx] = os.path.join(group, ba)
                 idx += 1
         try:
@@ -117,7 +113,7 @@ class HandleNotes(object):
             elif len(results_map) == 1:
                 self.open(results_map[1])
             else:
-                choice = int(raw_input("input id: "))
+                choice = int(input("input id: "))
                 self.open(results_map[choice])
         except Exception as e:
             # print "Error: %s" %e
@@ -137,7 +133,7 @@ if __name__ == '__main__':
                 DIRS = jsdic['DIRS']
                 MAPS = jsdic['MAPS']
         except Exception as e:
-            print e
+            print(e)
             sys.exit(1)
 
     # read sys.argv
