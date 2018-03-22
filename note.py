@@ -20,7 +20,9 @@ sys.setdefaultencoding('utf-8')
 class HandleNotes(object):
     """search notes from dirs."""
 
-    def __init__(self, dirs, recache=False,
+    def __init__(self,
+                 dirs,
+                 recache=False,
                  fileExplorer=False,
                  pkfile="note.pkl",
                  maps=defaultdict(lambda: "")):
