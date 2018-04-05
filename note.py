@@ -120,6 +120,11 @@ class HandleNotes(object):
             pass
 
 
+def check(iter):
+    for i in iter:
+        if not os.path.exists(i):
+            raise Exception("Not found: {}.".format(i))
+
 if __name__ == '__main__':
     # read config file(dirs and maps)
     PATH = os.path.dirname(__file__)
@@ -135,7 +140,9 @@ if __name__ == '__main__':
         except Exception as e:
             print(e)
             sys.exit(1)
-
+    # check exists.
+    check(DIRS)
+    check(MAPS.values())
     # read sys.argv
     if len(sys.argv) == 1:
         # no input argument.
