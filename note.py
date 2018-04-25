@@ -11,6 +11,7 @@ import re
 import sys
 from collections import defaultdict
 import json
+import argparse
 
 
 class HandleNotes(object):
@@ -43,7 +44,7 @@ class HandleNotes(object):
                 order = "gio open '{}'".format(filename)
             order = order + " &"
             if self.file_explorer:
-                os.popen2("nautilus '{}'".format(filename))
+                os.popen("nautilus '{}'".format(filename))
         os.system(order)
         # os.popen2(order)
 
@@ -82,7 +83,7 @@ class HandleNotes(object):
                             tg = False
                     except Exception as e:
                         print(("Maybe your RE is not correct.\nError: {}"
-                              .format(e)))
+                               .format(e)))
                         sys.exit(1)
                 if tg is True:
                     results.append(i)
@@ -125,9 +126,9 @@ def check(iter):
         if not os.path.exists(i):
             raise Exception("Not found: {}.".format(i))
 
-if __name__ == '__main__':
+
+def read_config(PATH):
     # read config file(dirs and maps)
-    PATH = os.path.dirname(__file__)
     configfile = os.path.join(PATH, "config.json")
     DIRS = []
     MAPS = defaultdict(lambda: "")
@@ -143,30 +144,41 @@ if __name__ == '__main__':
     # check exists.
     check(DIRS)
     check(MAPS.values())
-    # read sys.argv
-    if len(sys.argv) == 1:
-        # no input argument.
-        print("python note.py help")
-        sys.exit(0)
-    if sys.argv[1:] == ["recache"]:
-        # input recache order.
+    return DIRS, MAPS
+
+
+if __name__ == '__main__':
+
+    PATH = os.path.dirname(__file__)
+    DIRS, MAPS = read_config(PATH)
+
+    # print("dirs >>> {}".format(DIRS))
+    # print("maps >>> {}".format(MAPS))
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "-f",
+        "--fileExplorer",
+        action="store_true",
+        help="open it in file explorer at the same time.")
+    parser.add_argument(
+        "-r",
+        "--recache",
+        action="store_true",
+        help="recache dirs and files into pkl file.")
+    parser.add_argument(
+        "-k", "--key", dest="key", nargs='*', help="specify search keyword.")
+    args = parser.parse_args()
+
+    # recache to pkl file.
+    if args.recache:
         hn = HandleNotes(dirs=DIRS, recache=True, maps=MAPS)
         hn.getNames()
         print("[+] recache done.")
         sys.exit(0)
-    elif sys.argv[1:] == ["help"]:
-        print("Usage: python note.py substring1 substring2 ...\n\
-            \nAttention: please don't forget quotate each substring\
-if using RE.\n\
-            \npython note.py help\n  display this help page.\n\
-            \npython note.py file substring1 substring2 ...\n\
-open file in fileExplorer.")
-        sys.exit(0)
-    elif sys.argv[1] == "file":
-        # choose with explorer as the same time.
-        hn = HandleNotes(dirs=DIRS, fileExplorer=True, maps=MAPS)
-        hn.search(sys.argv[2:])
+
+    hn = HandleNotes(dirs=DIRS, maps=MAPS, fileExplorer=args.fileExplorer)
+    if args.key != []:
+        hn.search(args.key)
     else:
-        # normal mode.
-        hn = HandleNotes(dirs=DIRS, maps=MAPS)
-        hn.search(sys.argv[1:])
+        sys.exit("Not found: search keywords.")
