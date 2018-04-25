@@ -16,7 +16,7 @@ example of config.json:
 }
 ```
 
-then ```python note.py recache```
+then ```python note.py --recache```
 
 when add new notes into note-Dirs or rename notes,
 
@@ -24,20 +24,16 @@ you should recache in case of wrong results.
 
 ## help
 ```bash
-python note.py help
-```
-
-## recache
-
-```bash
-python note.py recache
+python note.py -h
 ```
 
 ## search from cache
 
 ```bash
-python note.py tag1 tag2 ... tagn
+alias note = "python note.py -k"
+note tag1 tag2 ... tagn
 ```
+
 # Example1
 ```bash
 $ note "java.math.*BigInteger.html"
