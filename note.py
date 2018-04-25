@@ -39,7 +39,7 @@ class HandleNotes(object):
             order = "vim '{}'".format(filename)
         else:
             if fix == '.ipynb':
-                order = "ipython notebook '{}'".format(filename)
+                order = "jupyter notebook --ip=127.0.0.1 '{}'".format(filename)
             else:
                 order = "gio open '{}'".format(filename)
             order = order + " &"
