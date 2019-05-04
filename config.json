@@ -1,5 +1,5 @@
 {
-    "DIRS": ["/home/zzp/note/"],
+    "DIRS": ["/home/zzp/note/", "/home/zzp/work/blog/source/"],
     "MAPS": {
         "re": "/home/zzp/note/python/Package_Module/re.md",
         "py": "/home/zzp/note/python/python.md",
