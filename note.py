@@ -14,6 +14,11 @@ import json
 import argparse
 
 
+def wsl_path(filename):
+    filename = filename.replace("/", "\\")    
+    return r"C:\Users\zzp\AppData\Local\Packages\CanonicalGroupLimited.UbuntuonWindows_79rhkp1fndgsc\LocalState\rootfs" + filename
+
+
 class HandleNotes(object):
     """search notes from dirs."""
 
@@ -22,31 +27,29 @@ class HandleNotes(object):
                  recache=False,
                  fileExplorer=False,
                  pkfile="note.pkl",
-                 maps=defaultdict(lambda: "")):
+                 maps=defaultdict(lambda: ""),
+                 opens=defaultdict(lambda: "")):
         self.paths = list(map(os.path.realpath, dirs))
         self.recache = recache
         self.file_explorer = fileExplorer
         self.path = os.path.dirname(__file__)
         self.pkfile = os.path.join(self.path, pkfile)
         self.maps = maps
+        self.opens = opens
         self.note_names = []
 
     def open(self, filename):
         """open note according to file type"""
         fix = os.path.splitext(filename)[1]
         order = ""
-        if 'SSH_CLIENT' in os.environ:
-            order = "vim '{}'".format(filename)
-        else:
-            if fix == '.ipynb':
-                order = "jupyter notebook --ip=127.0.0.1 '{}'".format(filename)
-            else:
-                order = "gio open '{}'".format(filename)
-            order = order + " &"
-            if self.file_explorer:
-                os.popen("nautilus '{}'".format(filename))
+        dirname = wsl_path(os.path.dirname(filename))
+        filename = wsl_path(filename)
+        if fix in self.opens:
+            order = '"{}" "{}" &'.format(self.opens[fix], filename)
+        if self.file_explorer:
+            os.popen('explorer.exe "{}" &'.format(dirname))
+        print(order)
         os.system(order)
-        # os.popen2(order)
 
     def getNames(self):
         if self.recache is True:
@@ -132,25 +135,27 @@ def read_config(PATH):
     configfile = os.path.join(PATH, "config.json")
     DIRS = []
     MAPS = defaultdict(lambda: "")
+    OPEN = defaultdict(lambda: "")
     if os.path.exists(configfile):
         try:
             with open(configfile) as jf:
                 jsdic = json.load(jf)
                 DIRS = jsdic['DIRS']
                 MAPS = jsdic['MAPS']
+                OPEN = jsdic['OPEN']
         except Exception as e:
             print(e)
             sys.exit(1)
     # check exists.
     check(DIRS)
     check(MAPS.values())
-    return DIRS, MAPS
+    return DIRS, MAPS, OPEN
 
 
 if __name__ == '__main__':
 
     PATH = os.path.dirname(__file__)
-    DIRS, MAPS = read_config(PATH)
+    DIRS, MAPS, OPEN = read_config(PATH)
 
     # print("dirs >>> {}".format(DIRS))
     # print("maps >>> {}".format(MAPS))
@@ -172,12 +177,12 @@ if __name__ == '__main__':
 
     # recache to pkl file.
     if args.recache:
-        hn = HandleNotes(dirs=DIRS, recache=True, maps=MAPS)
+        hn = HandleNotes(dirs=DIRS, recache=True, maps=MAPS, opens=OPEN)
         hn.getNames()
         print("[+] recache done.")
         sys.exit(0)
 
-    hn = HandleNotes(dirs=DIRS, maps=MAPS, fileExplorer=args.fileExplorer)
+    hn = HandleNotes(dirs=DIRS, maps=MAPS, opens=OPEN, fileExplorer=args.fileExplorer)
     if args.key != []:
         hn.search(args.key)
     else:

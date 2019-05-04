@@ -1,9 +1,15 @@
 {
-    "DIRS": ["/home/zzp/note/", "/home/zzp/database/jdk-10-docs"],
+    "DIRS": ["/home/zzp/note/"],
     "MAPS": {
-        "jdk": "/home/zzp/database/jdk-10-docs/index.html",
         "re": "/home/zzp/note/python/Package_Module/re.md",
         "py": "/home/zzp/note/python/python.md",
-        "git": "/home/zzp/note/ubuntu/git.md"
+        "git": "/home/zzp/work/blog/source/_posts/linux/git.md"
+    },
+    "OPEN":{
+        ".md2": "‪/mnt/c/Program Files/Microsoft VS Code/Code.exe",
+        ".md": "/mnt/c/Program Files/Typora/bin/typora.exe",
+        ".pdf": "/mnt/c/Program Files (x86)/Adobe/Acrobat 11.0/Acrobat/Acrobat.exe",
+        ".txt": "/mnt/c/Program Files (x86)/Notepad++/notepad++.exe",
+        ".ipynb": "jupyter notebook --ip=127.0.0.1"
     }
 }
